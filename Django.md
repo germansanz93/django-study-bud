@@ -346,3 +346,109 @@ def room(request, pk):
   return render(request, 'base/room.html', context)
 
 ```
+
+## forms
+En cada form en Django debemos enviar si o si un csrf_token:
+```html
+{% extends 'main.html' %}
+{% block content %}
+<div>
+  <form method='POST' action="">
+    {% csrf_token %}
+  </form>
+</div>
+{% endblock content %}
+```
+
+Django tiene una forma de crear forms que nos evita tener que hacerlos en html
+para eso creamos el archivo forms.py y en el importamos ModelForm de django.forms y el modelo sobre el que queremos hacer el form.
+```python
+from django.forms import ModelForm
+from .models import Room
+
+class RoomForm(ModelForm):
+    class Meta:
+        model = Room
+        fields = '__all__' #Indicamos que queremos un campo por cada valor (solo por el momento)
+```
+
+Luego debemos pasarlo como context a la vista
+```python
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import Room
+from .forms import RoomForm
+
+rooms = [
+  {'id': 1, 'name': 'Lets learn python!'},
+  {'id': 2, 'name': 'Design with Me'},
+  {'id': 3, 'name': 'Frontend Developers'},
+]
+
+def home(request):
+  rooms = Room.objects.all() #model manager
+  context = {'rooms': rooms}
+  return render(request, 'base/home.html', context)
+
+def room(request, pk):
+  room = Room.objects.get(id=pk)
+  context = {'room': room}
+  return render(request, 'base/room.html', context)
+
+def create_room(request):
+  form = RoomForm()
+  context = {'form': form}
+  return render(request, 'base/room_form.html', context)
+```
+
+Y por ultimo mostrarlo desde el template:
+
+```html
+{% extends 'main.html' %}
+{% block content %}
+<div>
+  <form method='POST' action="">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="Submit">
+  </form>
+</div>
+{% endblock content %}
+```
+.as_py hace que se muestre como una etiquta p en el html
+
+Luego para procesar el valor que el usuario envia, simplemente le paso el request.POST al RoomForm
+
+```python
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from .models import Room
+from .forms import RoomForm
+
+rooms = [
+  {'id': 1, 'name': 'Lets learn python!'},
+  {'id': 2, 'name': 'Design with Me'},
+  {'id': 3, 'name': 'Frontend Developers'},
+]
+
+def home(request):
+  rooms = Room.objects.all() #model manager
+  context = {'rooms': rooms}
+  return render(request, 'base/home.html', context)
+
+def room(request, pk):
+  room = Room.objects.get(id=pk)
+  context = {'room': room}
+  return render(request, 'base/room.html', context)
+
+def create_room(request):
+  form = RoomForm()
+  if request.method == 'POST':
+    form = RoomForm(request.POST)
+    if form.isValid():
+      form.save()
+      return redirect('home')
+
+  context = {'form': form}
+  return render(request, 'base/room_form.html', context)
+```
