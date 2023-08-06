@@ -261,3 +261,62 @@ Esto lo conseguimos en los templates reemplazando el valor de la url por el tag 
 {% endblock  %}
 ```
 
+## Apps instaladas
+Si observamos en settings.py en INSTALLED_APPS veremos que tenemos varias apps instaladas y la mayoria de estas ya vienen con migraciones para crear las tablas en base de datos y poder comenzar a utilizarse.
+
+Para ejecutar todas las migraciones puedo ejecutar el siguiente comando
+```bash
+python manage.py migrate
+```
+
+Y esto creara nuestra db por nosotros.
+
+Ahora podemos acceder al django admin panel y administrar nuestro sistema.
+
+Por el momento django viene con una db sqlite pero podemos reemplazarla por una db del tipo que nos de la gana.
+
+Luego para crear nuestras propias entidades de bases de datos debemos hacerlo en models.py y esto lo haremos a traves de clases de python, de modo que una clase de python representa a una tabla en la base de datos.
+
+```python
+from django.db import models
+
+class Room(models.Model):
+    # host =
+    # topic =
+    name = models.CharField(max_length=200)
+    description = models.TextField(null=True, blank=True)
+    #participants = 
+    updated = models.DateTimeField(auto_now=True) # always
+    created = models.DateTimeField(auto_now_add=True) # Only first time
+
+    def __str__(self):
+        return self.name
+```
+
+Luego de crear un modelo en python obviamente que lo primero que debemos hacer es migrar para que se cree nuestra tabla
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+Podemos ver que en el directorio migrations en nuestra app aparece una nueva migracion
+
+Luego con el comando:
+```bash
+python manage.py createsuperuser
+```
+
+podemos crearnos un usuario para acceder al admin panel
+
+A pesar de que agregamos la tabla room, no estamos pudiendo ver la tabla en el panel de administracion, esto se debe a que debemos primero registrar nuestro modelo en el archivo admin.py
+
+```python
+from django.contrib import admin
+from .models import Room
+
+admin.site.register(Room)
+
+```
+
+## Representando modelos en vistas
+Primero debemos importar nuestro modelo al archivo views.py
