@@ -57,3 +57,37 @@ urlpatterns = [
     path('', include('base.urls'))
 ]
 ```
+
+## templates
+Para mantener la organizacion tambien es bueno crear un directorio exclusivamente para los templates. Luego de crear el directorio debemos indicarle a Django donde esta, para que pueda encontrar los templates, para esto lo indicamos en settings.py en TEMPLATES y en el valor de DIRS
+
+```python
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            BASE_DIR / 'templates' #nueva linea
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+```
+
+Una vez definidos los templates podemos renderizarlos en nuestras views:
+```python 
+from django.shortcuts import render
+from django.http import HttpResponse
+
+def home(request):
+  return render(request, 'home.html')
+
+def room(request):
+  return render(request, 'room.html')
+```
