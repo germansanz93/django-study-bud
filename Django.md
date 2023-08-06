@@ -44,3 +44,16 @@ Luego para definir una vista lo hacemos a traves de una funcion. Dicha funcion d
 def home(request):
   return
 ```
+
+Como el proyecto puede crecer demasiado, conviene crear un archivo urls.py por cada app para que el archivo urls.py del proyecto no crezca de forma exagerada.
+
+Luego, una vez creado el archivo urls.py en nuestro app, debemos indicar el mismo al archivo urls.py principal y esto lo hacemos mediante la funcion include:
+```python
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('base.urls'))
+]
+```
