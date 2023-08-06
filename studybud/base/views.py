@@ -9,13 +9,11 @@ rooms = [
 ]
 
 def home(request):
+  rooms = Room.objects.all() #model manager
   context = {'rooms': rooms}
   return render(request, 'base/home.html', context)
 
 def room(request, pk):
-  room = None
-  for r in rooms:
-    if r['id'] == int(pk):
-      room = r
+  room = Room.objects.get(id=pk)
   context = {'room': room}
   return render(request, 'base/room.html', context)

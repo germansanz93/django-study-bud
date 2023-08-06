@@ -319,4 +319,30 @@ admin.site.register(Room)
 ```
 
 ## Representando modelos en vistas
-Primero debemos importar nuestro modelo al archivo views.py
+Primero debemos importar nuestro modelo al archivo views.py, luego debemos hacer uso del model manager para poder ejecutar queries a la base de datos.
+
+```python 
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import Room
+
+rooms = [
+  {'id': 1, 'name': 'Lets learn python!'},
+  {'id': 2, 'name': 'Design with Me'},
+  {'id': 3, 'name': 'Frontend Developers'},
+]
+
+def home(request):
+  rooms = Room.objects.all() #model manager, esta overrideando el valor de rooms
+  context = {'rooms': rooms}
+  return render(request, 'base/home.html', context)
+
+def room(request, pk):
+  room = None
+  for r in rooms:
+    if r['id'] == int(pk):
+      room = r
+  context = {'room': room}
+  return render(request, 'base/room.html', context)
+
+```
