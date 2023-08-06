@@ -19,7 +19,7 @@ para ejecutar el server en local puedo ejecutar:
 python manage.py runserver
 ```
 
-## Nociones basicas
+## Nociones básicas
 
 WSGI: Web Server Gateway Interface, a mediator that communicates between web servers and Python web applications
 ASGI: Asynchronous Server Gateway Interface, is the specification which Channels and Daphne are built upon, designed to untie Channels apps from a specific application server and provide a common way to write application and middleware code
@@ -35,11 +35,11 @@ Para crear nuestro app base con django ejecutamos el comando:
 python manage.py startapp base 
 ```
 Este app que estamos creando en este caso lo llamamos base porque va a ser nuestro app base.
-Veremos que se creo un nuevo directorio que se llama igual que nuestro app, sin emabargo el proyecto en django no tiene idea de que este app existe. Debemos conectarlos.
+Veremos que se creo un nuevo directorio que se llama igual que nuestro app, sin embargo el proyecto en django no tiene idea de que este app existe. Debemos conectarlos.
 
 Para esto debemos indicar nuestro app en el archivo settings.py dentro de INSTALLED_APPS.
 
-Luego para definir una vista lo hacemos a traves de una funcion. Dicha funcion debe tener como parametro a request, que es donde obtendremos la info del request que estamos atendiendo.
+Luego para definir una vista lo hacemos a traves de una función. Dicha función debe tener como parámetro a request, que es donde obtendremos la info del request que estamos atendiendo.
 ```python
 def home(request):
   return
@@ -47,7 +47,7 @@ def home(request):
 
 Como el proyecto puede crecer demasiado, conviene crear un archivo urls.py por cada app para que el archivo urls.py del proyecto no crezca de forma exagerada.
 
-Luego, una vez creado el archivo urls.py en nuestro app, debemos indicar el mismo al archivo urls.py principal y esto lo hacemos mediante la funcion include:
+Luego, una vez creado el archivo urls.py en nuestro app, debemos indicar el mismo al archivo urls.py principal y esto lo hacemos mediante la función include:
 ```python
 from django.contrib import admin
 from django.urls import path, include
@@ -59,7 +59,7 @@ urlpatterns = [
 ```
 
 ## templates
-Para mantener la organizacion tambien es bueno crear un directorio exclusivamente para los templates. Luego de crear el directorio debemos indicarle a Django donde esta, para que pueda encontrar los templates, para esto lo indicamos en settings.py en TEMPLATES y en el valor de DIRS
+Para mantener la organizacion también es bueno crear un directorio exclusivamente para los templates. Luego de crear el directorio debemos indicarle a Django donde esta, para que pueda encontrar los templates, para esto lo indicamos en settings.py en TEMPLATES y en el valor de DIRS
 
 ```python
 TEMPLATES = [
@@ -90,4 +90,38 @@ def home(request):
 
 def room(request):
   return render(request, 'room.html')
+```
+
+## Herencia de templates
+Podemos importar templates desde otros templates, esto nos es util por ejemplo para un navbar o algún segmento de nuestra web que debe repetirse en varias paginas ya que nos permite crear el código una única vez y luego reutilizarlo.
+
+Para esto podemos usar include en los archivos html e indicar que template queremos incluir:
+```html
+{% include 'navbar.html' %}
+<h1>Home Template</h2>
+```
+
+Otra opcion que tenemos es dentro de un html, insertar un bloque en una posicion especifica. Para esto tenemos block:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  {% block content %}
+  {% endblock  %}
+</body>
+</html>
+```
+
+y luego con extends indicamos el bloque en el otro html al que deseamos importar
+```html
+{% extends 'main.html' %}
+
+{% block content %}
+  <h1>Home Template</h2>
+{% endblock  %}
 ```
