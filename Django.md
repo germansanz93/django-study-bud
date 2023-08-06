@@ -125,3 +125,139 @@ y luego con extends indicamos el bloque en el otro html al que deseamos importar
   <h1>Home Template</h2>
 {% endblock  %}
 ```
+
+## Django template engine
+Podemos en los templates de Django enviar variables. (VER DOC.)
+
+Ademas tenemos diferentes tipos de tags. Podemos usar condicionales, iterar, es muy similar a ejs.
+
+Para enviar valores a las vistas lo hago a traves del contexto, el cual es un parametro opocional y espera recibir un map
+
+```python
+from django.shortcuts import render
+from django.http import HttpResponse
+
+rooms = [
+  {'id': 1, 'name': 'Lets learn python!'},
+  {'id': 2, 'name': 'Design with Me'},
+  {'id': 3, 'name': 'Frontend Developers'},
+]
+
+def home(request):
+  return render(request, 'home.html', {'rooms': rooms}) #context
+
+def room(request):
+  return render(request, 'room.html')
+```
+
+Luego podemos acceder a estos valores desde el template y utilizarlos:
+
+```html
+{% extends 'main.html' %}
+
+{% block content %}
+<h1>Home Template</h1>
+
+<div>
+  <div>
+    {% for room in rooms %}
+      <div>
+        <h5>{{room.id}} -- {{room.name}}</h5>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock  %}
+```
+
+OJO que si quremos separar los templates por app deben si o si estar dentro de un directorio con el nombre del app, de modo que por ejemplo para nuestro app base quedarian base/templates/base/
+
+
+## Rutas dinamicas
+Podemos pasar variables a las rutas en el archivo de urls.py y views.py de la siguiente forma:
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name="home"),
+    path('room/<str:pk>/', views.room, name="room"),
+]
+```
+
+```python 
+from django.shortcuts import render
+from django.http import HttpResponse
+
+rooms = [
+  {'id': 1, 'name': 'Lets learn python!'},
+  {'id': 2, 'name': 'Design with Me'},
+  {'id': 3, 'name': 'Frontend Developers'},
+]
+
+def home(request):
+  context = {'rooms': rooms}
+  return render(request, 'base/home.html', context)
+
+def room(request, pk):
+  room = None
+  for r in rooms:
+    if r['id'] == int(pk):
+      room = r
+  context = {'room': room}
+  return render(request, 'base/room.html', context)
+
+
+```
+
+```html
+{% extends 'main.html' %}
+
+{% block content %}
+<h1>Home Template</h1>
+
+<div>
+  <div>
+    {% for room in rooms %}
+      <div>
+        <h5>{{room.id}} -- <a href="/room/{{room.id}}">{{room.name}}</a></h5>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock  %}
+```
+
+```html
+{% extends 'main.html' %}
+
+{% block content %}
+  <h1>{{room.name}}</h1>
+{% endblock  %}
+```
+
+## Nombres de rutas
+Si queremos cambiar alguna ruta en un archivo urls.py tendremos que ir a todos los otros archivos donde utilizamos esa ruta y modificarla. En cambio si la referimos por su nombre esto ya no sera necesario debido a que el nombre no cambiara nunca por mas que modifiquemos el path.
+Esto lo conseguimos en los templates reemplazando el valor de la url por el tag de url de django
+
+```python
+{% extends 'main.html' %}
+
+{% block content %}
+<h1>Home Template</h1>
+
+<div>
+  <div>
+    {% for room in rooms %}
+      <div>
+        <h5>{{room.id}} -- <a href="{% url 'room' room.id %}">{{room.name}}</a></h5>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock  %}
+```
+
