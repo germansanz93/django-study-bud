@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Room
+from .models import Room, Topic
 from .forms import RoomForm
 
 rooms = [
@@ -10,8 +10,10 @@ rooms = [
 ]
 
 def home(request):
-  rooms = Room.objects.all() #model manager
-  context = {'rooms': rooms}
+  q = request.GET.get('q') if request.GET.get('q') != None else ''
+  rooms = Room.objects.filter(topic__name__icontains=q) #model manager
+  topics = Topic.objects.all()
+  context = {'rooms': rooms, 'topics': topics}
   return render(request, 'base/home.html', context)
 
 def room(request, pk):

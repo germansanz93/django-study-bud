@@ -499,3 +499,110 @@ def update_room(request, pk):
   context = {'form': form}
   return render(request, 'base/room_form.html', context)
 ```
+
+## query params
+Tambien podemos pasar query params para hacer filtros o busquedas, para eso debemos indicarlo en el link:
+
+```html
+{% extends 'main.html' %}
+
+{% block content %}
+
+<style>
+  .home-container{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+  }
+</style>
+
+<div class="home-container">
+
+  <div>
+    <h3>Browse topics</h3>
+    <hr>
+        <div>
+          <a href="{% url 'home' %}">All</a>
+        </div>
+    {% for topic in topics %}
+        <div>
+          <a href="{% url 'home' %}?q={{topic.name}}">{{topic.name}}</a>
+        </div>
+      {% endfor %}
+  </div>
+
+  <div>
+    <a href="{% url 'create-room' %}">Create Room</a>
+    <div>
+      {% for room in rooms %}
+        <div>
+          <a href="{% url 'update-room' room.id %}">Edit</a>
+          <a href="{% url 'delete-room' room.id %}">Delete</a>
+          <span>@{{room.host.username}}</span>
+          <h5>{{room.id}} -- <a href="{% url 'room' room.id %}">{{room.name}}</a></h5>
+          <small>{{room.topic.name}}</small>
+          <hr>
+        </div>
+      {% endfor %}
+    </div>
+  </div>  
+</div>
+
+{% endblock  %}
+```
+
+Luego en la query del modelo en lugar de usar all() podemos usar filter() y pasarle como argumento el valor que nos llega en q, ademas podemos buscarlo por el nombre de topic, pero usando __icontains que busca inclusive con solo una parte y es case insensivtive, de ahi la i.
+En el caso de que no se envie nada en la query, lo seteamos a un string vacio, de modo que con el icontains nos traiga todos los valores de la db.
+
+```python
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from .models import Room, Topic
+from .forms import RoomForm
+
+rooms = [
+  {'id': 1, 'name': 'Lets learn python!'},
+  {'id': 2, 'name': 'Design with Me'},
+  {'id': 3, 'name': 'Frontend Developers'},
+]
+
+def home(request):
+  q = request.GET.get('q') if request.GET.get('q') != None else ''
+  rooms = Room.objects.filter(topic__name__icontains=q) #model manager
+  topics = Topic.objects.all()
+  context = {'rooms': rooms, 'topics': topics}
+  return render(request, 'base/home.html', context)
+
+def room(request, pk):
+  room = Room.objects.get(id=pk)
+  context = {'room': room}
+  return render(request, 'base/room.html', context)
+
+def create_room(request):
+  form = RoomForm()
+  if request.method == 'POST':
+    form = RoomForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('home')
+
+  context = {'form': form}
+  return render(request, 'base/room_form.html', context)
+
+def update_room(request, pk):
+  room = Room.objects.get(id=pk)
+  form = RoomForm(instance=room)
+  if request.method == 'POST':
+    form = RoomForm(request.POST, instance=room)
+    if form.is_valid():
+      form.save()
+      return redirect('home')
+  context = {'form': form}
+  return render(request, 'base/room_form.html', context)
+
+def delete_room(request, pk):
+  room = Room.objects.get(id=pk)
+  if request.method == 'POST':
+    room.delete()
+    return redirect('home')
+  return render(request, 'base/delete.html', {'obj': room})
+```
