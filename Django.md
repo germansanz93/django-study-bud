@@ -772,3 +772,50 @@ Y luego en el main agregamos el uso de messages de django para mostrar los error
 </html>
 
 ```
+
+Luego para hacer el logout solo necesitamos la vista. No necesitamos un template porque no vamos a renderizar nada. En la vista solo debemos llamar al metodo logout incluido en django
+
+Para esto agregamos la logica para mostrar u ocultar el boton segun estemos logueados o no:
+```html
+<a href="/">
+  <h1>LOGO</h1>
+</a>
+
+<form method="GET" action="{% url 'home' %}">
+  <input type="text" name="q" placeholder="Search Rooms..." />
+</form>
+
+{% if request.user.is_authenticated %}
+<a href="{% url 'logout' %}">Logout</a>
+{% else %}
+<a href="{% url 'login' %}">Login</a>
+{% endif %}
+<hr />
+
+```
+
+Agregamos la nueva vista, haciendo uso del logout de django:
+```python
+def logout_user(request):
+  logout(request)
+  return redirect('home')
+```
+
+Y agregamos la URL:
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("login/", views.login_page, name="login"),
+    path("logout/", views.logout_user, name="logout"),
+    path('', views.home, name='home'),
+    path('room/<str:pk>/', views.room, name='room'),
+    path('create-room/', views.create_room, name='create-room'),
+    path('update-room/<str:pk>/', views.update_room, name='update-room'),
+    path('delete-room/<str:pk>/', views.delete_room, name='delete-room'),
+]
+```
+
+## control de acceso
+Podemos controlar a que endpoints se puede acceder y a cuales no sin loguearse usando anotaciones de django. En particular la anotacion login_required.

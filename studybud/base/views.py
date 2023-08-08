@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from .models import Room, Topic
 from .forms import RoomForm
@@ -39,6 +40,9 @@ def login_page(request):
   context = {}
   return render(request, 'base/login_register.html', context)
 
+def logout_user(request):
+  logout(request)
+  return redirect('home')
 
 def home(request):
   q = request.GET.get('q') if request.GET.get('q') != None else ''
