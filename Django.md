@@ -28,7 +28,7 @@ En el archivo urls.py es donde vamos a mapear todo el routing de nuestra app
 
 En el archivo settings.py es donde tenemos las configuraciones principales del proyecto.
 
-En django vamos a trabajar con algo llamado apps, podemos ver que por defecto tenemos algunas apps ya creadas. Basicamente las apps son pequeños componentes de nuestra web que nos permiten administrar diferentes partes del sitio.
+En django vamos a trabajar con algo llamado apps, podemos ver que por defecto tenemos algunas apps ya creadas. Básicamente las apps son pequeños componentes de nuestra web que nos permiten administrar diferentes partes del sitio.
 
 Para crear nuestro app base con django ejecutamos el comando:
 ```bash
@@ -59,7 +59,7 @@ urlpatterns = [
 ```
 
 ## templates
-Para mantener la organizacion también es bueno crear un directorio exclusivamente para los templates. Luego de crear el directorio debemos indicarle a Django donde esta, para que pueda encontrar los templates, para esto lo indicamos en settings.py en TEMPLATES y en el valor de DIRS
+Para mantener la organización también es bueno crear un directorio exclusivamente para los templates. Luego de crear el directorio debemos indicarle a Django donde esta, para que pueda encontrar los templates, para esto lo indicamos en settings.py en TEMPLATES y en el valor de DIRS
 
 ```python
 TEMPLATES = [
@@ -101,7 +101,7 @@ Para esto podemos usar include en los archivos html e indicar que template quere
 <h1>Home Template</h2>
 ```
 
-Otra opcion que tenemos es dentro de un html, insertar un bloque en una posicion especifica. Para esto tenemos block:
+Otra opción que tenemos es dentro de un html, insertar un bloque en una posición especifica. Para esto tenemos block:
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -131,7 +131,7 @@ Podemos en los templates de Django enviar variables. (VER DOC.)
 
 Ademas tenemos diferentes tipos de tags. Podemos usar condicionales, iterar, es muy similar a ejs.
 
-Para enviar valores a las vistas lo hago a traves del contexto, el cual es un parametro opocional y espera recibir un map
+Para enviar valores a las vistas lo hago a traves del contexto, el cual es un parámetro opcional y espera recibir un map
 
 ```python
 from django.shortcuts import render
@@ -171,10 +171,10 @@ Luego podemos acceder a estos valores desde el template y utilizarlos:
 {% endblock  %}
 ```
 
-OJO que si quremos separar los templates por app deben si o si estar dentro de un directorio con el nombre del app, de modo que por ejemplo para nuestro app base quedarian base/templates/base/
+OJO que si queremos separar los templates por app deben si o si estar dentro de un directorio con el nombre del app, de modo que por ejemplo para nuestro app base quedarían base/templates/base/
 
 
-## Rutas dinamicas
+## Rutas dinámicas
 Podemos pasar variables a las rutas en el archivo de urls.py y views.py de la siguiente forma:
 ```python
 from django.urls import path
@@ -262,7 +262,7 @@ Esto lo conseguimos en los templates reemplazando el valor de la url por el tag 
 ```
 
 ## Apps instaladas
-Si observamos en settings.py en INSTALLED_APPS veremos que tenemos varias apps instaladas y la mayoria de estas ya vienen con migraciones para crear las tablas en base de datos y poder comenzar a utilizarse.
+Si observamos en settings.py en INSTALLED_APPS veremos que tenemos varias apps instaladas y la mayoría de estas ya vienen con migraciones para crear las tablas en base de datos y poder comenzar a utilizarse.
 
 Para ejecutar todas las migraciones puedo ejecutar el siguiente comando
 ```bash
@@ -299,7 +299,7 @@ Luego de crear un modelo en python obviamente que lo primero que debemos hacer e
 python manage.py makemigrations
 python manage.py migrate
 ```
-Podemos ver que en el directorio migrations en nuestra app aparece una nueva migracion
+Podemos ver que en el directorio migrations en nuestra app aparece una nueva migración
 
 Luego con el comando:
 ```bash
@@ -308,7 +308,7 @@ python manage.py createsuperuser
 
 podemos crearnos un usuario para acceder al admin panel
 
-A pesar de que agregamos la tabla room, no estamos pudiendo ver la tabla en el panel de administracion, esto se debe a que debemos primero registrar nuestro modelo en el archivo admin.py
+A pesar de que agregamos la tabla room, no estamos pudiendo ver la tabla en el panel de administración, esto se debe a que debemos primero registrar nuestro modelo en el archivo admin.py
 
 ```python
 from django.contrib import admin
@@ -415,9 +415,9 @@ Y por ultimo mostrarlo desde el template:
 </div>
 {% endblock content %}
 ```
-.as_py hace que se muestre como una etiquta p en el html
+.as_py hace que se muestre como una etiqueta p en el html
 
-Luego para procesar el valor que el usuario envia, simplemente le paso el request.POST al RoomForm
+Luego para procesar el valor que el usuario envía, simplemente le paso el request.POST al RoomForm
 
 ```python
 from django.shortcuts import render, redirect
@@ -453,7 +453,7 @@ def create_room(request):
   return render(request, 'base/room_form.html', context)
 ```
 
-Para crear un form de update es muy similar al form de create pero le pasamos como instance los valores que ya estan cargados en db y que se pretenden modificar.
+Para crear un form de update es muy similar al form de create pero le pasamos como instance los valores que ya están cargados en db y que se pretenden modificar.
 
 ```python
 from django.shortcuts import render, redirect
@@ -501,7 +501,7 @@ def update_room(request, pk):
 ```
 
 ## query params
-Tambien podemos pasar query params para hacer filtros o busquedas, para eso debemos indicarlo en el link:
+También podemos pasar query params para hacer filtros o búsquedas, para eso debemos indicarlo en el link:
 
 ```html
 {% extends 'main.html' %}
@@ -551,7 +551,7 @@ Tambien podemos pasar query params para hacer filtros o busquedas, para eso debe
 ```
 
 Luego en la query del modelo en lugar de usar all() podemos usar filter() y pasarle como argumento el valor que nos llega en q, ademas podemos buscarlo por el nombre de topic, pero usando __icontains que busca inclusive con solo una parte y es case insensivtive, de ahi la i.
-En el caso de que no se envie nada en la query, lo seteamos a un string vacio, de modo que con el icontains nos traiga todos los valores de la db.
+En el caso de que no se envíe nada en la query, lo seteamos a un string vacío, de modo que con el icontains nos traiga todos los valores de la db.
 
 ```python
 from django.shortcuts import render, redirect
@@ -607,9 +607,9 @@ def delete_room(request, pk):
   return render(request, 'base/delete.html', {'obj': room})
 ```
 
-## Barra de busqueda
-podemos crear una barra de busqueda aprovechando que tenemos nuestro metodo filter. Para eso podemos usar Q que viene con python y nos permite usar AND y OR en las queries para poder buscar por diferentes valores.
-Para eso modificamos nuestro archiv views.py. y ahora nos permite hacer la busqueda por topic, nombre de la sala y descripcion.
+## Barra de búsqueda
+podemos crear una barra de búsqueda aprovechando que tenemos nuestro método filter. Para eso podemos usar Q que viene con python y nos permite usar AND y OR en las queries para poder buscar por diferentes valores.
+Para eso modificamos nuestro archivo views.py. y ahora nos permite hacer la búsqueda por topic, nombre de la sala y descripción.
 ```python
 from django.shortcuts import render, redirect
 from django.db.models import Q
@@ -669,12 +669,12 @@ def delete_room(request, pk):
   return render(request, 'base/delete.html', {'obj': room})
 ```
 
-## Autenticacion
+## Autenticación
 Por defecto Django maneja session based authentication. Lo hace en tabla de base de datos llamada sessions.
 
-El navegador almacena en las cookies nuestra sesion y esta cookie se envia en cada peticion y se valida en backend para ver que tengamos accesos.
+El navegador almacena en las cookies nuestra sesión y esta cookie se envía en cada petición y se valida en backend para ver que tengamos accesos.
 
-Nosotros vamos a crear una interfaz de autenticacion para el usuario que haga uso del flujo de autenticacion de backend de django.
+Nosotros vamos a crear una interfaz de autenticación para el usuario que haga uso del flujo de autenticación de backend de django.
 
 Para eso definimos nuestro template:
 ```html
@@ -773,9 +773,9 @@ Y luego en el main agregamos el uso de messages de django para mostrar los error
 
 ```
 
-Luego para hacer el logout solo necesitamos la vista. No necesitamos un template porque no vamos a renderizar nada. En la vista solo debemos llamar al metodo logout incluido en django
+Luego para hacer el logout solo necesitamos la vista. No necesitamos un template porque no vamos a renderizar nada. En la vista solo debemos llamar al método logout incluido en django
 
-Para esto agregamos la logica para mostrar u ocultar el boton segun estemos logueados o no:
+Para esto agregamos la lógica para mostrar u ocultar el botón según estemos logueados o no:
 ```html
 <a href="/">
   <h1>LOGO</h1>
@@ -818,4 +818,112 @@ urlpatterns = [
 ```
 
 ## control de acceso
-Podemos controlar a que endpoints se puede acceder y a cuales no sin loguearse usando anotaciones de django. En particular la anotacion login_required.
+Podemos controlar a que endpoints se puede acceder y a cuales no sin loguearse usando anotaciones de django. En particular la anotación login_required.
+
+Luego solo necesito utilizar esta anotación en las views que quiera restringir:
+```python
+from django.shortcuts import render, redirect
+from django.db.models import Q
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse
+from .models import Room, Topic
+from .forms import RoomForm
+
+# rooms = [
+#   {'id': 1, 'name': 'Lets learn python!'},
+#   {'id': 2, 'name': 'Design with Me'},
+#   {'id': 3, 'name': 'Frontend Developers'},
+# ]
+
+def login_page(request):
+  if(request.method == 'POST'):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    
+    loginError = False;
+
+    try:
+      user = User.objects.get(username=username)
+    except:
+      loginError = True
+
+    user = authenticate(request, username=username, password=password)
+
+    if user is not None:
+      login(request, user)
+      return redirect('home')
+    else:
+      loginError = True
+
+    if loginError: 
+      messages.error(request, "Wrong username or password.")
+
+  context = {}
+  return render(request, 'base/login_register.html', context)
+
+def logout_user(request):
+  logout(request)
+  return redirect('home')
+
+def home(request):
+  q = request.GET.get('q') if request.GET.get('q') != None else ''
+  rooms = Room.objects.filter(
+    Q(topic__name__icontains=q) |
+    Q(name__icontains=q) |
+    Q(description__icontains=q)
+  ) 
+  topics = Topic.objects.all() #model manager
+  room_count = rooms.count()
+  context = {'rooms': rooms, 'topics': topics, 'room_count': room_count}
+  return render(request, 'base/home.html', context)
+
+def room(request, pk):
+  room = Room.objects.get(id=pk)
+  context = {'room': room}
+  return render(request, 'base/room.html', context)
+
+@login_required(login_url='login')
+def create_room(request):
+  form = RoomForm()
+  if request.method == 'POST':
+    form = RoomForm(request.POST)
+    if form.is_valid():
+      form.save()
+      return redirect('home')
+
+  context = {'form': form}
+  return render(request, 'base/room_form.html', context)
+
+@login_required(login_url='login')
+def update_room(request, pk):
+  room = Room.objects.get(id=pk)
+  form = RoomForm(instance=room)
+
+  if request.user != room.host:
+    return HttpResponse('You are not the owner of this room.')
+
+  if request.method == 'POST':
+    form = RoomForm(request.POST, instance=room)
+    if form.is_valid():
+      form.save()
+      return redirect('home')
+  context = {'form': form}
+  return render(request, 'base/room_form.html', context)
+
+@login_required(login_url='login')
+def delete_room(request, pk):
+  room = Room.objects.get(id=pk)
+  if request.user != room.host:
+    return HttpResponse('You are not the owner of this room.')
+  if request.method == 'POST':
+    room.delete()
+    return redirect('home')
+  return render(request, 'base/delete.html', {'obj': room})
+```
+
+También se agrego un control para que solo permita modificar las salas que sean de persona que esta logueada.
+
