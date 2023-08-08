@@ -668,3 +668,107 @@ def delete_room(request, pk):
     return redirect('home')
   return render(request, 'base/delete.html', {'obj': room})
 ```
+
+## Autenticacion
+Por defecto Django maneja session based authentication. Lo hace en tabla de base de datos llamada sessions.
+
+El navegador almacena en las cookies nuestra sesion y esta cookie se envia en cada peticion y se valida en backend para ver que tengamos accesos.
+
+Nosotros vamos a crear una interfaz de autenticacion para el usuario que haga uso del flujo de autenticacion de backend de django.
+
+Para eso definimos nuestro template:
+```html
+{% extends 'main.html' %} {% block content %}
+
+<div>
+  <form method="POST" action="">
+    {% csrf_token %}
+
+    <label>
+      Username:
+      <input type="text" name="username" placeholder="Enter Username" />
+    </label>
+    <label>
+      Password:
+      <input type="password" name="password" placeholder="Enter Password" />
+    </label>
+    <input type="submit" value="Login" />
+  </form>
+</div>
+
+{% endblock content %}
+
+```
+
+Y nuestra vista:
+
+```python
+def login_page(request):
+  if(request.method == 'POST'):
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    
+    loginError = False;
+
+    try:
+      user = User.objects.get(username=username)
+    except:
+      loginError = True
+
+    user = authenticate(request, username=username, password=password)
+
+    if user is not None:
+      login(request, user)
+      return redirect('home')
+    else:
+      loginError = True
+
+    if loginError: 
+      messages.error(request, "Wrong username or password.")
+
+  context = {}
+  return render(request, 'base/login_register.html', context)
+```
+
+la url
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("login/", views.login_page, name="login"),
+    path('', views.home, name='home'),
+    path('room/<str:pk>/', views.room, name='room'),
+    path('create-room/', views.create_room, name='create-room'),
+    path('update-room/<str:pk>/', views.update_room, name='update-room'),
+    path('delete-room/<str:pk>/', views.delete_room, name='delete-room'),
+]
+```
+
+Y luego en el main agregamos el uso de messages de django para mostrar los errores:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    {% include 'navbar.html' %} 
+
+    {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %} 
+    {% endblock %}
+  </body>
+</html>
+
+```
