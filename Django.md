@@ -927,3 +927,36 @@ def delete_room(request, pk):
 
 También se agrego un control para que solo permita modificar las salas que sean de persona que esta logueada.
 
+## Form de register
+Vamos a usar Django para generar los campos del form de registro
+para eso importamos el form de django:
+```python
+from django.contrib.auth.forms import UserCreationForm
+```
+el cual usaremos por el momento, pero que luego podemos customizar.
+
+Luego de agregar la url en urls.py, agregamos la vista en views.py: 
+
+```python
+def register_page(request):
+  form = UserCreationForm()
+
+  if request.method == 'POST':
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+      user = form.save(commit=False)
+      user.username = user.username.lower()
+      user.save()
+      login(request, user)
+      return redirect('home')
+    else:
+      messages.error(request, 'An error ocurred during registration')
+
+  context = {'form': form}
+  return render(request, 'base/login_register.html', context)
+
+```
+
+y modificamos login_register para incluir el form de registro que utilizamos de django.
+
+
