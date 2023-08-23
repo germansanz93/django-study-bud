@@ -960,3 +960,45 @@ def register_page(request):
 y modificamos login_register para incluir el form de registro que utilizamos de django.
 
 
+## Archivos estaticos
+Para poder servir archivos estaticos (css, js, images, etc) con django debemos indicarle al framework cuales son estos archivos y esto lo hacemos creando una nueva carpeta en el directorio raiz llamada static.
+Dentro de esta carpeta creamos una carpeta llamada styles donde vamos a almacenar nuestros css y dentro creamos un archivo main.css. Tambien dentro de static podemos crear una carpeta para, por ejemplo, agregar nuestras imagenes.
+
+Ahora debemos modificar el archivo settings.py para indicar donde tenemos nuestros archivos estaticos.
+
+```python
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
+```
+
+y lo agregamos en el main.html para que se aplique a todos los templates
+```html
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/main.css' %}">
+    <title>Document</title>
+  </head>
+  <body>
+    {% include 'navbar.html' %} 
+
+    {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %} 
+    {% endblock %}
+  </body>
+</html>
+```
+Notese que ademas fue necesario agregar los tags de static y load static
+
